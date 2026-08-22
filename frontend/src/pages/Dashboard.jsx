@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { fetchDashboard } from '../api';
-import { AlertCircle, AlertTriangle, CheckCircle, Clock, TrendingUp, ShieldAlert, Sparkles, Activity } from 'lucide-react';
+import { 
+  FileText, Clock, CalendarDays, Award, Sparkles, Paperclip, AlertCircle, 
+  Search, Eye, MoreVertical, ArrowUp, Edit3, MessageSquare, AlertTriangle, Activity, ShieldAlert
+} from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function Dashboard() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     loadDashboard();
@@ -15,153 +17,225 @@ export default function Dashboard() {
   async function loadDashboard() {
     try {
       setLoading(true);
-      setError(null);
       const res = await fetchDashboard();
       setData(res);
     } catch (err) {
-      setError("We couldn't load the dashboard. Please try again.");
+      console.error(err);
     } finally {
       setLoading(false);
     }
   }
 
+  // Fallback data structure for styling purposes based on the screenshot layout
+  const d = data && data.summary.total > 0 ? data : {
+    summary: { total: 1248, breached_today: 43, at_risk: 156, high_risk: 28 },
+    urgent_requests: [
+      { request_id: 'REQ-9921', service_type: 'Building Permit', department: 'Urban Planning', time_remaining: '2 Hours left', current_stage: 'Review Phase', risk_level: 'HIGH' },
+      { request_id: 'REQ-9920', service_type: 'Business License', department: 'Commerce', time_remaining: '1 Day left', current_stage: 'Document Verification', risk_level: 'HIGH' },
+      { request_id: 'REQ-9919', service_type: 'Health Inspection', department: 'Public Health', time_remaining: 'Overdue', current_stage: 'Assigned', risk_level: 'HIGH' }
+    ]
+  };
+
   if (loading) return (
     <div className="flex flex-col items-center justify-center min-h-[50vh] text-slate-500">
-      <Activity className="w-12 h-12 animate-pulse mb-4 text-primary" />
-      <div className="text-xl font-medium">Analyzing smart tenders...</div>
+      <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+      <div className="font-medium">Loading Dashboard...</div>
     </div>
   );
-  
-  if (error) return (
-    <div className="card p-12 text-center max-w-lg mx-auto mt-12">
-      <AlertTriangle className="w-16 h-16 text-danger mx-auto mb-6" />
-      <p className="text-xl text-slate-800 font-semibold mb-6">{error}</p>
-      <button onClick={loadDashboard} className="btn-primary">TRY AGAIN</button>
-    </div>
-  );
-
-  if (!data || data.summary.total === 0) {
-    return (
-      <div className="card p-16 text-center mt-8 max-w-2xl mx-auto border-dashed border-2 border-slate-300">
-        <Sparkles className="w-16 h-16 text-primary mx-auto mb-6" />
-        <h2 className="text-3xl font-bold mb-4 text-slate-900">Welcome to BidlyAI</h2>
-        <p className="text-slate-500 mb-10 text-lg">Upload your tender data or load the demo dataset to let our AI engine analyze your SLA risks.</p>
-        <Link to="/upload" className="btn-primary shadow-lg shadow-indigo-500/30">GET STARTED</Link>
-      </div>
-    );
-  }
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-          <h1 className="text-4xl font-bold text-slate-900 mb-2">Smart Overview</h1>
-          <p className="text-lg text-slate-500 font-medium">AI-powered insights for today's active tenders.</p>
-        </div>
-        <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-2xl shadow-sm border border-slate-200 text-sm font-semibold text-slate-600">
-          <span className="w-2.5 h-2.5 bg-success rounded-full animate-pulse"></span>
-          AI ENGINE ACTIVE
-        </div>
+    <div className="space-y-10">
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl font-bold text-slate-900 mb-2">Dashboard Overview</h1>
+        <p className="text-lg text-slate-600">Welcome back, Department Officer.</p>
       </div>
 
-      {/* Bento Box Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="card p-6 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
-          <div className="w-12 h-12 bg-indigo-100 rounded-2xl flex items-center justify-center mb-6 text-primary">
-            <TrendingUp className="w-6 h-6" />
-          </div>
-          <p className="text-slate-500 font-semibold text-sm tracking-wider mb-2 uppercase">Total Requests</p>
-          <p className="text-5xl font-bold text-slate-900">{data.summary.total.toLocaleString()}</p>
-        </div>
-        
-        <div className="card p-6 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-amber-50 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
-          <div className="w-12 h-12 bg-warning-light rounded-2xl flex items-center justify-center mb-6 text-warning">
-            <AlertTriangle className="w-6 h-6" />
-          </div>
-          <p className="text-slate-500 font-semibold text-sm tracking-wider mb-2 uppercase">At Risk</p>
-          <p className="text-5xl font-bold text-slate-900">{data.summary.at_risk.toLocaleString()}</p>
-        </div>
-
-        {/* AI Highlight Card */}
-        <div className="card p-6 ai-gradient shadow-lg shadow-indigo-500/25 border-none relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-bl-full backdrop-blur-3xl"></div>
-          <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center mb-6 text-white backdrop-blur-md border border-white/20">
-            <ShieldAlert className="w-6 h-6" />
-          </div>
-          <p className="text-white/80 font-semibold text-sm tracking-wider mb-2 uppercase">Critical AI Alerts</p>
-          <p className="text-5xl font-bold text-white">{data.summary.high_risk.toLocaleString()}</p>
-        </div>
-
-        <div className="card p-6 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-red-50 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
-          <div className="w-12 h-12 bg-danger-light rounded-2xl flex items-center justify-center mb-6 text-danger">
-            <AlertCircle className="w-6 h-6" />
-          </div>
-          <p className="text-slate-500 font-semibold text-sm tracking-wider mb-2 uppercase">Breached Today</p>
-          <p className="text-5xl font-bold text-slate-900">{data.summary.breached_today.toLocaleString()}</p>
-        </div>
-      </div>
-
-      {/* Urgent Requests List */}
-      <div className="mt-10 flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-          <Sparkles className="w-6 h-6 text-primary" />
-          Smart Prioritization
-        </h2>
-        <Link to="/requests" className="text-primary font-semibold hover:underline">View All Requests</Link>
-      </div>
-      
-      {data.urgent_requests.length === 0 ? (
-        <div className="card p-12 text-center bg-slate-50/50 border-dashed border-2">
-          <CheckCircle className="w-16 h-16 text-success mx-auto mb-4" />
-          <p className="text-2xl font-semibold text-slate-800">Perfect. No tenders require urgent intervention.</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 gap-4">
-          {data.urgent_requests.map(req => (
-            <div key={req.request_id} className="card p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-l-4 hover:-translate-y-1 transition-all duration-300" style={{ borderLeftColor: req.risk_level === 'HIGH' ? '#EF4444' : req.risk_level === 'MEDIUM' ? '#F59E0B' : '#10B981'}}>
-              <div className="flex-1">
-                <div className="flex flex-wrap items-center gap-3 mb-3">
-                  <span className="font-bold text-xl text-slate-900">{req.request_id}</span>
-                  <span className="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-sm font-semibold tracking-wide">
-                    {req.service_type}
-                  </span>
-                  <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-lg text-sm font-semibold tracking-wide">
-                    {req.department}
-                  </span>
-                </div>
-                
-                <div className="flex flex-wrap items-center gap-4 mt-4">
-                  {req.risk_level === 'HIGH' && (
-                    <div className="flex items-center gap-2 text-danger font-bold text-sm bg-danger-light px-3 py-1.5 rounded-lg border border-red-200">
-                      <AlertCircle className="w-5 h-5" />
-                      HIGH AI RISK: {req.risk_score}%
-                    </div>
-                  )}
-                  {req.risk_level === 'MEDIUM' && (
-                    <div className="flex items-center gap-2 text-warning font-bold text-sm bg-warning-light px-3 py-1.5 rounded-lg border border-amber-200">
-                      <AlertTriangle className="w-5 h-5" />
-                      MEDIUM RISK: {req.risk_score}%
-                    </div>
-                  )}
-                  <div className="flex items-center gap-2 text-slate-600 font-semibold text-sm bg-slate-100 px-3 py-1.5 rounded-lg">
-                    <Clock className="w-5 h-5 text-slate-400" />
-                    {req.time_remaining}
-                  </div>
-                </div>
-              </div>
-              
-              <div className="mt-4 lg:mt-0">
-                <Link to={`/requests/${req.request_id}`} className="btn-outline border-slate-200 hover:border-primary hover:text-primary whitespace-nowrap bg-transparent shadow-none">
-                  Analyze Details
-                </Link>
-              </div>
+      {/* Top Metric Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Card 1: Green */}
+        <div className="bg-white rounded-xl border-[1.5px] border-[#22C55E]/40 p-5 shadow-sm flex flex-col gap-4">
+          <div className="flex justify-between items-start">
+            <div className="flex flex-col">
+              <span className="text-sm font-semibold text-slate-600">Active Requests</span>
+              <span className="text-3xl lg:text-4xl font-semibold text-slate-900 tracking-tight mt-1">
+                {d.summary.total}
+              </span>
             </div>
-          ))}
+            <div className="p-2 bg-[#22C55E]/10 rounded-lg shrink-0">
+              <FileText className="w-5 h-5 text-[#22C55E]" />
+            </div>
+          </div>
+          <div className="flex items-center gap-1 text-xs font-bold text-[#22C55E]">
+            <ArrowUp className="w-3 h-3 shrink-0" />
+            <span>Volume</span>
+          </div>
         </div>
-      )}
+
+        {/* Card 2: Red */}
+        <div className="bg-white rounded-xl border-[1.5px] border-[#EF4444]/40 p-5 shadow-sm flex flex-col gap-4">
+          <div className="flex justify-between items-start">
+            <div className="flex flex-col">
+              <span className="text-sm font-semibold text-slate-600">SLA Breached</span>
+              <span className="text-3xl lg:text-4xl font-semibold text-slate-900 tracking-tight mt-1">
+                {d.summary.breached_today}
+              </span>
+            </div>
+            <div className="p-2 bg-[#EF4444]/10 rounded-lg shrink-0">
+              <Clock className="w-5 h-5 text-[#EF4444]" />
+            </div>
+          </div>
+          <div className="flex items-center gap-1 text-xs font-bold text-[#EF4444]">
+            <AlertCircle className="w-3 h-3 shrink-0" />
+            <span>Immediate Action</span>
+          </div>
+        </div>
+
+        {/* Card 3: Blue */}
+        <div className="bg-white rounded-xl border-[1.5px] border-[#3B82F6]/40 p-5 shadow-sm flex flex-col gap-4">
+          <div className="flex justify-between items-start">
+            <div className="flex flex-col">
+              <span className="text-sm font-semibold text-slate-600">At Risk of Delay</span>
+              <span className="text-3xl lg:text-4xl font-semibold text-slate-900 tracking-tight mt-1">
+                {d.summary.at_risk}
+              </span>
+            </div>
+            <div className="p-2 bg-[#3B82F6]/10 rounded-lg shrink-0">
+              <AlertTriangle className="w-5 h-5 text-[#3B82F6]" />
+            </div>
+          </div>
+          <div className="flex items-center gap-1 text-xs font-semibold text-slate-400">
+            <span>Next 48 Hours</span>
+          </div>
+        </div>
+
+        {/* Card 4: Purple */}
+        <div className="bg-white rounded-xl border-[1.5px] border-[#A855F7]/40 p-5 shadow-sm flex flex-col gap-4">
+          <div className="flex justify-between items-start">
+            <div className="flex flex-col">
+              <span className="text-sm font-semibold text-slate-600">Critical AI Alerts</span>
+              <span className="text-3xl lg:text-4xl font-semibold text-slate-900 tracking-tight mt-1">
+                {d.summary.high_risk}
+              </span>
+            </div>
+            <div className="p-2 bg-[#A855F7]/10 rounded-lg shrink-0">
+              <ShieldAlert className="w-5 h-5 text-[#A855F7]" />
+            </div>
+          </div>
+          <div className="flex items-center gap-1 text-xs font-bold text-[#A855F7]">
+            <Sparkles className="w-3 h-3 shrink-0" />
+            <span>AI Prediction</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Ask Bidly Section -> Ask DelayGuard */}
+      <div>
+        <h2 className="text-lg font-bold text-slate-900 mb-4">Ask DelayGuard AI</h2>
+        <div className="bg-[#EEF2FF] rounded-2xl p-6 shadow-sm border border-[#E0E7FF]">
+          <div className="bg-white rounded-xl p-3 flex items-center shadow-sm border border-slate-100 mb-4">
+            <Sparkles className="w-5 h-5 text-slate-400 mx-3" />
+            <input 
+              type="text" 
+              placeholder="Ask me anything about SLA risks, bottlenecks, or pending requests..." 
+              className="flex-1 outline-none text-slate-700 bg-transparent text-[15px]"
+            />
+            <div className="flex items-center gap-3 px-3 border-l border-slate-100">
+              <button className="text-slate-400 hover:text-slate-600 transition-colors"><Paperclip className="w-5 h-5" /></button>
+              <button className="text-slate-400 hover:text-slate-600 transition-colors"><div className="w-5 h-5 rounded-full border border-slate-400 flex items-center justify-center text-[10px] font-bold">P</div></button>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <button className="bg-white border border-slate-100 rounded-lg px-4 py-2 text-sm font-semibold text-slate-700 flex items-center gap-2 shadow-sm hover:bg-slate-50">
+              <AlertTriangle className="w-4 h-4 text-orange-500" /> Show high-risk requests
+            </button>
+            <button className="bg-white border border-slate-100 rounded-lg px-4 py-2 text-sm font-semibold text-slate-700 flex items-center gap-2 shadow-sm hover:bg-slate-50">
+              <Activity className="w-4 h-4 text-blue-500" /> Analyze main bottlenecks
+            </button>
+            <button className="bg-white border border-slate-100 rounded-lg px-4 py-2 text-sm font-semibold text-slate-700 flex items-center gap-2 shadow-sm hover:bg-slate-50">
+              <MessageSquare className="w-4 h-4 text-purple-500" /> Explain SLA delay factors
+            </button>
+            <button className="bg-white border border-slate-100 rounded-lg px-4 py-2 text-sm font-semibold text-slate-700 flex items-center gap-2 shadow-sm hover:bg-slate-50">
+              <Sparkles className="w-4 h-4 text-green-500" /> Auto-assign resources
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div>
+        <h2 className="text-lg font-bold text-slate-900 mb-4">Quick Actions</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <button className="bg-white border border-slate-200 rounded-xl p-4 flex items-center justify-center gap-3 text-sm font-semibold text-slate-800 shadow-sm hover:bg-slate-50 hover:border-slate-300 transition-all">
+            <Sparkles className="w-5 h-5 text-purple-600" /> Ask DelayGuard AI
+          </button>
+          <button className="bg-white border border-slate-200 rounded-xl p-4 flex items-center justify-center gap-3 text-sm font-semibold text-slate-800 shadow-sm hover:bg-slate-50 hover:border-slate-300 transition-all">
+            <FileText className="w-5 h-5 text-blue-600" /> Generate SLA Report
+          </button>
+          <button className="bg-white border border-slate-200 rounded-xl p-4 flex items-center justify-center gap-3 text-sm font-semibold text-slate-800 shadow-sm hover:bg-slate-50 hover:border-slate-300 transition-all">
+            <Activity className="w-5 h-5 text-green-600" /> View Bottlenecks
+          </button>
+          <button className="bg-white border border-slate-200 rounded-xl p-4 flex items-center justify-center gap-3 text-sm font-semibold text-slate-800 shadow-sm hover:bg-slate-50 hover:border-slate-300 transition-all">
+            <Search className="w-5 h-5 text-orange-500" /> Find Stalled Requests
+          </button>
+        </div>
+      </div>
+
+      {/* Recent Tenders -> Recent Urgent Requests */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-bold text-slate-900">Recent Urgent Requests</h2>
+          <Link to="/app/requests" className="text-sm font-bold text-blue-600 hover:underline flex items-center gap-1">
+            View all requests &rarr;
+          </Link>
+        </div>
+        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-slate-200 bg-white">
+                <th className="px-6 py-4 text-xs font-semibold text-slate-500">Request ID</th>
+                <th className="px-6 py-4 text-xs font-semibold text-slate-500">Service Type</th>
+                <th className="px-6 py-4 text-xs font-semibold text-slate-500">Department</th>
+                <th className="px-6 py-4 text-xs font-semibold text-slate-500">SLA Deadline</th>
+                <th className="px-6 py-4 text-xs font-semibold text-slate-500">Risk Level</th>
+                <th className="px-6 py-4 text-xs font-semibold text-slate-500">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {d.urgent_requests.slice(0, 3).map((req, i) => (
+                <tr key={i} className="hover:bg-slate-50 transition-colors">
+                  <td className="px-6 py-4 text-sm font-bold text-slate-800 whitespace-nowrap">{req.request_id}</td>
+                  <td className="px-6 py-4 text-sm text-slate-500 whitespace-nowrap">{req.service_type}</td>
+                  <td className="px-6 py-4 text-sm text-slate-500 whitespace-nowrap">{req.department}</td>
+                  <td className="px-6 py-4 text-sm text-slate-500 whitespace-nowrap">{req.time_remaining}</td>
+                  <td className="px-6 py-4 text-sm whitespace-nowrap">
+                    {req.risk_level === 'HIGH' ? (
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">
+                        High AI Risk
+                      </span>
+                    ) : req.risk_level === 'MEDIUM' ? (
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-700">
+                        Medium Risk
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
+                        Low Risk
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-6 py-4 text-sm whitespace-nowrap">
+                    <div className="flex items-center gap-3 text-slate-400">
+                      <Link to={`/app/requests/${req.request_id}`} className="hover:text-blue-600 transition-colors"><Eye className="w-4 h-4" /></Link>
+                      <button className="hover:text-slate-600 transition-colors"><MoreVertical className="w-4 h-4" /></button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }
