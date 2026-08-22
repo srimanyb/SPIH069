@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-background text-foreground antialiased font-sans;
+    font-size: 17px; /* Kept large but slightly tuned down from 18px for denser bento layouts */
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-bold tracking-tight text-slate-900;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-xl text-lg font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-primary text-white hover:bg-primary-dark hover:shadow-lg hover:-translate-y-0.5 h-12 px-8 py-2;
+  }
+  
+  .btn-danger {
+    @apply inline-flex items-center justify-center rounded-xl text-lg font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-danger text-white hover:bg-red-600 hover:shadow-lg hover:-translate-y-0.5 h-12 px-8 py-2;
+  }
+  
+  .btn-outline {
+    @apply inline-flex items-center justify-center rounded-xl text-lg font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none border-2 border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700 h-12 px-8 py-2;
+  }
+
+  .card {
+    @apply rounded-3xl border border-border bg-white text-card-foreground shadow-soft transition-all duration-300 hover:shadow-float;
+  }
+
+  /* Sleek Glassmorphism gradient for AI highlights */
+  .ai-gradient {
+    @apply bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white;
+  }
+}
