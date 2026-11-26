@@ -1,0 +1,376 @@
+DOCKER CLI COMMANDS
+
+write in the docker file
+FROM redis:latest
+CMD ["redis-server"]
+
+C:\Users\Madhu\Desktop\Docker\Project1\redis
+ls
+docker build -t myredis .
+docker images
+docker run -d --name newmyredis myredis
+docker ps
+docker stop newmyredis
+docker commit newmyredis budurajumadhurika/redisnewimage
+docker login
+docker push budurajumadhurika/redisnewimage
+docker rm newmyredis
+docker rmi budurajumadhurika/redisnewimage
+docker pull budurajumadhurika/redisnewimage
+docker run --name myredisnew -d budurajumadhurika/redisnewimage
+docker exec -it myredisnew redis-cli
+exit
+docker logout
+
+
+modify and push docker image
+
+docker pull ubuntu
+docker run -it --name newubuntu -d ubuntu
+docker ps
+docker exec -it newubuntu bash
+git --version
+apt update
+apt install git -y
+exit
+docker stop newubuntu
+docker commit newubuntu budaraju madhurika/newubuntu2024
+docker login
+docker push budaraju madhurika/newubuntu2024
+docker rm newubuntu
+docker rmi budaraju madhurika/newubuntu2024
+docker logout
+docker run --name newubuntu2024 -it budaraju/madhurika/newubuntu2024
+docker ps -a
+
+
+git commands
+
+# 1. GIT VERSION
+git --version
+
+# 2. GIT CONFIGURATION
+git config --list
+git config --global user.name "Your Name"
+git config --global user.email "your@email.com"
+git config --global --list
+git config --global init.defaultBranch main
+
+# 3. REPOSITORY INITIALIZATION
+git init
+git status
+git clone <repository-url>
+git remote -v
+git rev-parse --show-toplevel
+
+# 4. ADD FILES TO STAGING AREA
+git add .
+git add -A
+git add <filename>
+git add *.txt
+git status
+git reset
+git reset <filename>
+
+# 5. COMMIT CHANGES
+git commit -m "Initial commit"
+git commit -am "Updated files"
+git commit --amend
+git commit --amend -m "New message"
+
+# 6. VIEW COMMIT HISTORY
+git log
+git log --oneline
+git log --all --graph
+git show
+git show <commit-id>
+
+# 7. CHECK DIFFERENCES
+git diff
+git diff --staged
+git diff --cached
+git diff <filename>
+
+# 8. BRANCH COMMANDS
+git branch
+git branch <branch-name>
+git branch -a
+git switch <branch-name>
+git switch -c <branch-name>
+git checkout <branch-name>
+git checkout -b <branch-name>
+git branch -d <branch-name>
+git branch -D <branch-name>
+git branch -m <new-name>
+
+# 9. MERGE COMMANDS
+git merge <branch-name>
+git merge --abort
+git mergetool
+
+# 10. REMOTE REPOSITORY
+git remote add origin <repository-url>
+git remote -v
+git remote remove origin
+git remote rename origin upstream
+git remote set-url origin <repository-url>
+
+# 11. PUSH COMMANDS
+git push
+git push -u origin main
+git push origin main
+git push --all origin
+git push --force
+git push --force-with-lease
+
+# 12. PULL AND FETCH
+git pull
+git pull origin main
+git fetch
+git fetch origin
+
+# 13. CLONE COMMANDS
+git clone <repository-url>
+git clone -b <branch-name> <repository-url>
+git clone --depth 1 <repository-url>
+
+# 14. RESET COMMANDS
+git reset
+git reset HEAD
+git reset --soft HEAD~1
+git reset --mixed HEAD~1
+git reset --hard HEAD~1
+
+# 15. RESTORE COMMANDS
+git restore <filename>
+git restore .
+git restore --staged <filename>
+
+# 16. REVERT COMMANDS
+git revert <commit-id>
+
+# 17. STASH COMMANDS
+git stash
+git stash save "message"
+git stash list
+git stash apply
+git stash pop
+git stash drop
+git stash clear
+
+# 18. DELETE FILES
+git rm <filename>
+git rm -r <folder-name>
+git rm --cached <filename>
+git clean -n
+git clean -f
+git clean -fd
+
+# 19. TAG COMMANDS
+git tag
+git tag <tag-name>
+git tag -a v1.0 -m "Version 1.0"
+git show v1.0
+git push origin v1.0
+git push origin --tags
+git tag -d <tag-name>
+
+# 20. HELP COMMANDS
+git help
+git help add
+git help commit
+git help push
+git help pull
+git help branch
+git add -h
+git commit -h
+
+# 21. GIT BASH TERMINAL COMMANDS
+pwd
+ls
+ls -la
+cd <folder-name>
+cd ..
+mkdir <folder-name>
+touch <filename>
+cat <filename>
+nano <filename>
+clear
+rm <filename>
+
+# 22. AUTHENTICATION / CREDENTIAL MANAGER
+git credential-manager
+git credential-manager configure
+git credential-manager github login
+git credential-manager github logout
+
+# 23. ADVANCED GIT COMMANDS
+git cherry-pick <commit-id>
+git rebase <branch-name>
+git rebase --abort
+git rebase --continue
+git bisect start
+git bisect good
+git bisect bad
+git blame <filename>
+git reflog
+git archive --format=zip HEAD -o project.zip
+git submodule add <repository-url>
+git gc
+
+
+
+NORMAL HTML FILE
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello World</title>
+</head>
+<body>
+    <h1>Hello World!</h1>
+    <p>Welcome to HTML.</p>
+</body>
+</html>
+
+
+
+DOCKER
+
+https://gist.github.com/bradtraversy/faa8de544c62eef3f31de406982f1d42
+Docker-compose up –d
+Open browser
+Localhost:8000
+docker ps
+localhost:8000/wp-admin/
+docker-compose stop
+docker ps
+docker-compose start
+
+
+
+
+version: '2'
+services:
+  wordpress:
+    depends_on:
+      - db
+    image: wordpress
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db:3306      
+      WORDPRESS_DB_USER: admin
+      WORDPRESS_DB_PASSWORD: admin
+      WORDPRESS_DB_NAME: wordpress
+    ports:
+      - 8082:80
+    networks:
+      - myNetwork
+  db:
+    image: mysql
+    restart: always
+    volumes:
+      - ./database:/var/lib/mysql    
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+    networks:
+      - myNetwork
+  phpmyadmin:
+    depends_on:
+      - db
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8083:80
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: admin
+    networks:
+      - myNetwork
+networks:
+  myNetwork:
+volumes:
+  database:
+
+
+nagios 
+
+docker pull jasonrivers/nagios:latest
+docker run --name nagiosdemo -p 8888:80 jasonrivers/nagios:latest
+http://localhost:8888
+User : nagiosadminPass : nagios 
+Open PowershellDocker psdocker rm nagiosdemodocker imagesdocker rmi jasonriversnagios
+
+kubernetes
+
+minikube start
+kubectl create deployment mynginx --image=nginx
+kubectl get deployments
+kubectl expose deployment mynginx --type=NodePort --port=80 --target-port=80
+kubectl scale deployment mynginx --replicas=4
+kubectl get deploymentskubectl get podskubectl port-forward svc/mynginx 8081:80localhost:8081
+
+Open Powershell Minikube dashboardkubectl delete deployment mynginxkubectl delete service mynginxminikube stop
+
+
+
+Maven web project
+
+Maven Web Project
+Create a GitHub repository.
+Open Eclipse Git Bash.
+Execute:
+Maven Web Project Configuration:
+Group/Organization: org.apache
+Archetype: maven-archetype-webapp
+Dependencies:
+Servlet API
+Add Servlet API Maven dependency in pom.xml.
+
+git init
+git add .
+git commit -m "sample"
+git remote add origin "GITHUB_REPOSITORY_URL"
+git push -u origin master
+
+
+
+Maven java project
+
+
+Maven Java Project
+Create a GitHub repository.
+Open Git Bash.
+Execute the following commands:
+
+File Explorer:
+Open C:\Users\Sam\eclipse-workspace.
+Copy your content.
+Paste it into C:\Users\Sam (as indicated in the notes).
+Maven Java Project Configuration:
+- Archetype: quickstart
+Maven Commands:
+Clean
+Install
+Test
+Build
+
+git clone "GITHUB_REPOSITORY_URL"
+cd PROJECT_FOLDER
+git add .
+git commit -m "sample"
+git push
+
+
+Group Id:com.app.demo
+
+Artifact Id: SampleMavenJavaProject
+
+Version: 
+0.0.1-SNAPSHOT
+
+Package:
+com.app.demo.SampleMavenJavaProject
